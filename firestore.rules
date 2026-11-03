@@ -1,0 +1,35 @@
+rules_version = '2';
+
+// Regras de segurança do Controle de ASOs.
+// Só entra quem tem login E está na coleção "membros" (o ID do documento é o e-mail, em minúsculas).
+// papel "editor" pode alterar; qualquer outro papel (ex.: "leitura") só visualiza.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function membro() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/membros/$(request.auth.token.email));
+    }
+
+    function editor() {
+      return membro()
+        && get(/databases/$(database)/documents/membros/$(request.auth.token.email)).data.papel == 'editor';
+    }
+
+    match /colaboradores/{id} {
+      allow read: if membro();
+      allow write: if editor();
+    }
+
+    match /config/{id} {
+      allow read: if membro();
+      allow write: if editor();
+    }
+
+    // A lista de membros só é alterada pelo administrador, no Console do Firebase.
+    match /membros/{email} {
+      allow read: if request.auth != null && request.auth.token.email == email;
+      allow write: if false;
+    }
+  }
+}

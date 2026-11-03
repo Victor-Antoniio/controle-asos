@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Controle de ASOs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<!-- Tela de login -->
+<section class="login" id="loginView" hidden>
+  <form id="loginForm" novalidate>
+    <h1>Controle de ASOs</h1>
+    <p>Entre com o e-mail e a senha cadastrados pelo administrador.</p>
+    <label>E-mail<input id="lEmail" type="email" autocomplete="username" required></label>
+    <label>Senha<input id="lSenha" type="password" autocomplete="current-password" required></label>
+    <div class="err" id="lErr" hidden></div>
+    <button class="primary" type="submit" id="lBtn">Entrar</button>
+    <button class="ghost" type="button" id="lReset">Esqueci minha senha</button>
+  </form>
+</section>
+
+<!-- Aviso de configuração pendente -->
+<section class="login" id="setupView" hidden>
+  <form>
+    <h1>Falta configurar</h1>
+    <p>Abra o arquivo <b>firebase-config.js</b> e cole os dados do seu projeto Firebase. O passo a passo está no README.md.</p>
+  </form>
+</section>
+
+<!-- App -->
+<div class="wrap" id="appView" hidden>
+  <header class="top">
+    <div>
+      <h1>Controle de ASOs</h1>
+      <p>Exames ocupacionais por colaborador, com vencimentos calculados pela periodicidade do PCMSO.</p>
+    </div>
+    <div class="actions">
+      <button id="btnNovo" class="primary" type="button">+ Novo colaborador</button>
+      <button id="btnImport" type="button">Importar planilha</button>
+      <button id="btnExport" type="button">Exportar Excel</button>
+      <button id="btnRegras" type="button">Regras de vencimento</button>
+    </div>
+  </header>
+  <div class="userbox"><span id="userEmail"></span><button class="ghost" type="button" id="btnSair">Sair</button></div>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <section class="tiles" id="tiles" aria-label="Resumo"></section>
+
+  <section class="cal" aria-label="Vencimentos por mês">
+    <div class="cal-head"><h2>Vencimentos por mês</h2><span>Clique em um mês para filtrar a lista. A primeira coluna soma os ASOs já vencidos.</span></div>
+    <div class="bars" id="bars"></div>
+  </section>
+
+  <section class="filters" aria-label="Filtros">
+    <label class="q">Buscar<input id="fq" type="search" placeholder="Nome, matrícula ou CPF"></label>
+    <label>Situação ASO<select id="fstatus"></select></label>
+    <label>Setor<select id="fsetor"></select></label>
+    <label>Equipe<select id="fequipe"></select></label>
+    <label>Cargo<select id="fcargo"></select></label>
+    <label>Situação cadastro<select id="fsit"></select></label>
+    <button id="btnLimpar" class="ghost" type="button">Limpar filtros</button>
+  </section>
+  <div class="count" id="count"></div>
+
+  <div class="tablebox">
+    <table>
+      <thead><tr>
+        <th><button data-sort="matricula">Matrícula</button></th>
+        <th><button data-sort="nome">Colaborador</button></th>
+        <th><button data-sort="setor">Setor / Equipe</button></th>
+        <th><button data-sort="ult">Último ASO</button></th>
+        <th><button data-sort="prox">Próximo ASO</button></th>
+        <th><button data-sort="dias">Dias</button></th>
+        <th><button data-sort="status">Situação ASO</button></th>
+        <th><button data-sort="ag">Agendamento</button></th>
+        <th><button data-sort="sit">Cadastro</button></th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div id="empty" class="empty" hidden></div>
+  </div>
+
+  <footer>Periodicidade do exame periódico conforme o PCMSO da empresa (NR-7). Colaboradores desligados não entram nos alertas. CPF exibido parcialmente na lista.</footer>
+</div>
+
+<div id="overlay"></div>
+<div id="toast" class="toast" hidden role="status"></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

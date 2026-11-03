@@ -1,0 +1,4 @@
+# Nunca envie planilhas com dados de colaboradores para o GitHub
+*.xlsx
+*.xls
+*.csv
